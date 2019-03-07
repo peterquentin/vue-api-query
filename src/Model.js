@@ -1,6 +1,16 @@
 import Builder from './Builder';
 import StaticModel from './StaticModel';
 
+const _removeWrapping = (data) => {
+  Object.keys(data).forEach(key => {
+    let value = data[key];
+
+    if(value && typeof value.data !== "undefined" && Array.isArray(value.data)) {
+      data[key] = value.data
+    }
+  });
+}
+
 export default class Model extends StaticModel {
 
   constructor(...atributtes) {
@@ -227,7 +237,7 @@ export default class Model extends StaticModel {
    */
 
   first() {
-    return this.get().then(response => Model.responseData(response)[0] || {})
+    return this.get().then(response => response[0] || {})
   }
 
   find(identifier) {
@@ -240,7 +250,7 @@ export default class Model extends StaticModel {
     return this.request({
       url,
       method: 'GET'
-    }).then(response => new this.constructor(this.resolveResponse(response)))
+    }).then(response => new this.constructor(this._resolveResponse(response)))
   }
 
   get() {
@@ -252,7 +262,7 @@ export default class Model extends StaticModel {
       url,
       method: 'GET'
     }).then(response => {
-      let collection = Model.responseData(response.data)
+      let collection = response.data.data || response.data
       collection = Array.isArray(collection) ? collection : [collection]
 
       collection = collection.map(c => {
@@ -264,7 +274,7 @@ export default class Model extends StaticModel {
 
       response.data.data ? response.data.data = collection : response.data = collection
 
-      return this.resolveResponse(response)
+      return this._resolveResponse(response)
     })
   }
 
@@ -274,30 +284,12 @@ export default class Model extends StaticModel {
       .then(response => response.data || response)
   }
 
-  static responseData(response) {
-    return response.data || response
-  }
+  _resolveResponse(response) {
+    let data = response.data.data || response.data
 
-  static removeWrapping(data) {
-    Object.keys(data).forEach(key => {
-      let value = data[key];
+    Array.isArray(data) ? data.map(item => _removeWrapping(item)) : _removeWrapping(data)
 
-      if(typeof value.data !== "undefined" && Array.isArray(value.data)) {
-        data[key] = value.data
-      }
-    });
-  }
-
-  resolveResponse(response) {
-    if (Model.withoutWrapping === undefined || Model.withoutWrapping === true) {
-      let data = Model.responseData(response.data)
-
-      Array.isArray(data) ? data.map(item => Model.removeWrapping(item)) : Model.removeWrapping(data)
-
-      return data
-    }
-
-    return response.data
+    return data
   }
 
   /**
@@ -325,7 +317,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, this.resolveResponse(response))
+      let self = Object.assign(this, this._resolveResponse(response))
       return self
     })
   }
@@ -336,7 +328,7 @@ export default class Model extends StaticModel {
       url: this.endpoint(),
       data: this
     }).then(response => {
-      let self = Object.assign(this, this.resolveResponse(response))
+      let self = Object.assign(this, this._resolveResponse(response))
       return self
     })
   }

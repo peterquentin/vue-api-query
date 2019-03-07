@@ -98,29 +98,7 @@ describe('Model methods', () => {
     post.comments().get()
   })
 
-  test('get() fetch style request with "data" attribute when Model.withoutWrapping false', async () => {
-    Model.withoutWrapping = false
-
-    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
-
-    const posts = await Post.get()
-
-    expect(posts.data).toEqual(postsEmbedResponse.data)
-
-  })
-
-  test('get() "data" from nested relations in response when Model.withoutWrapping false', async () => {
-    Model.withoutWrapping = false
-
-    axiosMock.onGet('http://localhost/posts?include=comments').reply(200, postsNestedEmbedResponse)
-
-    const posts = await Post.include('comments').get()
-    expect(posts).toEqual(postsNestedEmbedResponse)
-
-  })
-
-  test('get() unwraps "data" from nested relations in response when Model.withoutWrapping true or undefined', async () => {
-    Model.withoutWrapping = true
+  test('get() unwraps "data" from nested relations in response', async () => {
 
     axiosMock.onGet('http://localhost/posts?include=comments').reply(200, postsNestedEmbedResponse)
 
@@ -134,18 +112,6 @@ describe('Model methods', () => {
 
     const posts = await Post.$get()
 
-    expect(posts).toEqual(postsEmbedResponse.data)
-
-  })
-
-  test('$get() fetch style request with "data" attribute when Model.withoutWrapping false', async () => {
-    Model.withoutWrapping = false
-
-    axiosMock.onGet('http://localhost/posts').reply(200, postsEmbedResponse)
-
-    const posts = await Post.$get()
-
-    // $get() will alway unwrap, no matter what
     expect(posts).toEqual(postsEmbedResponse.data)
 
   })
@@ -189,26 +155,6 @@ describe('Model methods', () => {
 
     post = new Post({ title: 'Cool!' })
     await post.save()
-
-  })
-
-  test('save() keeps data attr from response when Model.withoutWrapping false', async () => {
-    Model.withoutWrapping = false
-
-    let post
-
-    axiosMock.onAny().reply((config) => {
-      expect(config.method).toEqual('put')
-      expect(config.data).toEqual(JSON.stringify(postEmbedResponse.data))
-      expect(config.url).toEqual('http://localhost/posts/3')
-
-      return [200, postEmbedResponse]
-    })
-
-    post = new Post(postEmbedResponse.data)
-    let result = await post.save()
-
-    expect(result.data).toEqual(postEmbedResponse.data)
 
   })
 
