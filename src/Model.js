@@ -312,10 +312,8 @@ export default class Model extends StaticModel {
   }
 
   _create() {
-    return this.request({
-      method: 'POST',
-      url: this.endpoint(),
-      data: this
+    return this.post(this.endpoint(), {
+      data: this.formData || this
     }).then(response => {
       let self = Object.assign(this, this._resolveResponse(response))
       return self
@@ -323,10 +321,8 @@ export default class Model extends StaticModel {
   }
 
   _update() {
-    return this.request({
-      method: 'PUT',
-      url: this.endpoint(),
-      data: this
+    return this.put(this.endpoint(), {
+      data: this.formData || this
     }).then(response => {
       let self = Object.assign(this, this._resolveResponse(response))
       return self
