@@ -312,18 +312,18 @@ export default class Model extends StaticModel {
   }
 
   _create() {
-    return this.post(this.endpoint(), {
-      data: this.formData || this
-    }).then(response => {
+    return this.$http.post(this.endpoint(),
+      this.formData || this
+    ).then(response => {
       let self = Object.assign(this, this._resolveResponse(response))
       return self
     })
   }
 
   _update() {
-    return this.put(this.endpoint(), {
-      data: this.formData || this
-    }).then(response => {
+    return this.$http.put(this.endpoint(),
+      this.formData || this
+    ).then(response => {
       let self = Object.assign(this, this._resolveResponse(response))
       return self
     })
