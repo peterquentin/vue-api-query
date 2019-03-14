@@ -1,6 +1,6 @@
 {
   "name": "vue-api-query",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "💎 Elegant and simple way to build requests for REST API",
   "main": "build/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/robsontenorio/vue-api-query.git"
+    "url": "git+https://github.com/peterquentin/vue-api-query.git#feature/normalize-response"
   },
   "keywords": [
     "vue",
