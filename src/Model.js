@@ -321,7 +321,8 @@ export default class Model extends StaticModel {
   }
 
   _update() {
-    return this.$http.put(this.endpoint(),
+    const method = this.formData ? 'post' : 'put'
+    return this.$http[method](this.endpoint(),
       this.formData || this
     ).then(response => {
       let self = Object.assign(this, this._resolveResponse(response))

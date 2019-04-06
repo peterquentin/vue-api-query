@@ -411,7 +411,8 @@ function (_StaticModel) {
     value: function _update() {
       var _this6 = this;
 
-      return this.$http.put(this.endpoint(), this.formData || this).then(function (response) {
+      var method = this.formData ? 'post' : 'put';
+      return this.$http[method](this.endpoint(), this.formData || this).then(function (response) {
         var self = Object.assign(_this6, _this6._resolveResponse(response));
         return self;
       });
